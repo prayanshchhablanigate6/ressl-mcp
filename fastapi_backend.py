@@ -51,8 +51,7 @@ async def edit_file(
     prompt: str = Form(...)
 ):
     file_content = read_file_from_minio(zip_filename, file_path)
-    mcp_server_url = MCP_SERVER_URL
-    result = await agent(prompt, file_path, file_content, mcp_server_url)
+    result = await agent(prompt, zip_filename, file_path, file_content)
     return {"result": result}
 
 # Write a file to MinIO (outside ZIP workflow)

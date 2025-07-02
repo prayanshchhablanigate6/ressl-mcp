@@ -53,6 +53,10 @@ def read_file_from_minio(zip_filename: str, file_path: str) -> str:
             # Normalize file_path for comparison
             file_list = zip_ref.namelist()
             print("I am file_List: ", file_list)
+            if file_path not in file_list:
+                response.close()
+                response.release_conn()
+                return "file doesn't exist"
             with zip_ref.open(file_path) as f:
                 content = f.read().decode()
     response.close()

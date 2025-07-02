@@ -128,11 +128,14 @@ async def agent(
         if msg.tool_calls:
             for call in msg.tool_calls:
                 params = json.loads(call.function.arguments)
+                # Unwrap if LLM returns {"params": {...}}
+                if "params" in params and isinstance(params["params"], dict):
+                    params = params["params"]
                 # inject defaults the LLM might omit
-                params.setdefault("zip_filename", zip_filename)
-                params.setdefault("file_path", file_path)
+                params["zip_filename"] = zip_filename 
+                params["file_path"]   = file_path
 
-                result = await call_tool(call.function.name, {"params": params}, rid=call.id)
+                result = await call_tool(call.function.name, params, rid=call.id)
 
                 messages.append({
                     "role": "tool",
@@ -143,7 +146,6 @@ async def agent(
 
         return msg.content
 
-# ───────────── Test: Print tool list from MCP server ─────────────
 if __name__ == "__main__":
     import asyncio
     async def test_tool_list():
